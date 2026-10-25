@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#183d35">
+  <title>Книгозбірня | Облік бібліотеки</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="Книгозбірня, каталог">
+        <span class="brand-mark" aria-hidden="true">К</span>
+        <span><strong>Книгозбірня</strong><small>облік бібліотеки</small></span>
+      </a>
+      <div class="sidebar-rule"></div>
+      <p class="nav-caption">РОБОЧИЙ ПРОСТІР</p>
+      <nav id="main-nav" aria-label="Основна навігація">
+        <button class="nav-item active" data-view="catalog"><span class="nav-icon">▤</span>Каталог</button>
+        <button class="nav-item" data-view="loans"><span class="nav-icon">↗</span>Мої видачі</button>
+        <button class="nav-item hidden" data-view="readers" data-roles="LIBRARIAN"><span class="nav-icon">♧</span>Читачі</button>
+        <button class="nav-item hidden" data-view="reports" data-roles="ADMIN"><span class="nav-icon">▥</span>Звіти й персонал</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="open-status"><span class="status-dot"></span><span>Система обліку</span></div>
+        <small>Лабораторна робота №3</small>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div class="breadcrumb"><span>БІБЛІОТЕКА</span><span class="crumb-slash">/</span><strong id="breadcrumb-view">Каталог</strong></div>
+        <div class="account-area">
+          <span id="account-label" class="account-label">Гість</span>
+          <button id="auth-open" class="button button-outline" type="button">Увійти</button>
+          <button id="password-open" class="button button-outline hidden" type="button">Пароль</button>
+          <button id="logout-button" class="icon-button hidden" type="button" aria-label="Вийти" title="Вийти">↪</button>
+        </div>
+      </header>
+
+      <section class="page-heading">
+        <div>
+          <p class="eyebrow" id="page-eyebrow">ФОНД БІБЛІОТЕКИ</p>
+          <h1 id="page-title">Каталог</h1>
+          <p class="heading-note" id="page-note">Знайдіть видання та перевірте доступність примірників.</p>
+        </div>
+        <div class="heading-actions">
+          <button id="add-book-open" class="button button-primary hidden" type="button">＋ Додати книгу</button>
+          <button id="add-reader-open" class="button button-primary hidden" type="button">＋ Зареєструвати читача</button>
+          <button id="issue-open" class="button button-primary hidden" type="button">＋ Оформити видачу</button>
+        </div>
+      </section>
+
+      <section id="view-root" aria-live="polite" aria-busy="false"></section>
+      <footer class="page-footer"><span>Інформаційна система обліку бібліотеки</span><span id="footer-role">Публічний каталог</span></footer>
+    </main>
+  </div>
+
+  <dialog id="auth-dialog" class="dialog">
+    <form method="dialog" class="dialog-head"><div><p class="eyebrow">ОБЛІКОВИЙ ЗАПИС</p><h2 id="auth-title">Вхід у систему</h2></div><button class="icon-button" aria-label="Закрити">×</button></form>
+    <div class="segmented" role="tablist" aria-label="Режим автентифікації">
+      <button class="segment active" type="button" data-auth-mode="login">Вхід</button>
+      <button class="segment" type="button" data-auth-mode="register">Реєстрація читача</button>
+    </div>
+    <form id="auth-form" class="form-stack"></form>
+  </dialog>
+
+  <dialog id="password-dialog" class="dialog">
+    <form method="dialog" class="dialog-head"><div><p class="eyebrow">БЕЗПЕКА</p><h2>Зміна пароля</h2></div><button class="icon-button" aria-label="Закрити">×</button></form>
+    <form id="password-form" class="form-stack">
+      <label>Поточний пароль<input name="currentPassword" type="password" required autocomplete="current-password"></label>
+      <label>Новий пароль<input name="newPassword" type="password" required minlength="8" maxlength="100" autocomplete="new-password"></label>
+      <label>Повторіть новий пароль<input name="confirmPassword" type="password" required minlength="8" maxlength="100" autocomplete="new-password"></label>
+      <div class="dialog-actions"><button type="button" class="button button-outline" data-close="password-dialog">Скасувати</button><button class="button button-primary" type="submit">Змінити пароль</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="book-dialog" class="dialog">
+    <form method="dialog" class="dialog-head"><div><p class="eyebrow">КАТАЛОГ</p><h2 id="book-dialog-title">Нове видання</h2></div><button class="icon-button" aria-label="Закрити">×</button></form>
+    <form id="book-form" class="form-stack">
+      <label>Назва<input name="title" required maxlength="240"></label>
+      <label>Автор<input name="author" required maxlength="180"></label>
+      <div class="form-grid"><label>Жанр<input name="genre" maxlength="100"></label><label>ISBN<input name="isbn" maxlength="20"></label></div>
+      <div class="form-grid"><label>Рік видання<input name="publicationYear" type="number" min="1000" max="2100"></label><label>Видавництво<input name="publisher" maxlength="180"></label></div>
+      <label id="inventory-field">Інвентарні номери <span class="field-hint">по одному в кожному рядку</span><textarea name="inventoryNumbers" rows="3" required></textarea></label>
+      <div class="dialog-actions"><button type="button" class="button button-outline" data-close="book-dialog">Скасувати</button><button class="button button-primary" type="submit">Зберегти видання</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="loan-dialog" class="dialog">
+    <form method="dialog" class="dialog-head"><div><p class="eyebrow">ОБІГ ФОНДУ</p><h2>Нова видача</h2></div><button class="icon-button" aria-label="Закрити">×</button></form>
+    <form id="loan-form" class="form-stack">
+      <label>Читач<select name="readerId" required></select></label>
+      <label>Примірник<select name="copyId" required></select></label>
+      <p class="field-hint">Термін повернення встановлюється на 14 днів.</p>
+      <div class="dialog-actions"><button type="button" class="button button-outline" data-close="loan-dialog">Скасувати</button><button class="button button-primary" type="submit">Підтвердити видачу</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="reader-dialog" class="dialog">
+    <form method="dialog" class="dialog-head"><div><p class="eyebrow">ЧИТАЦЬКІ ФОРМУЛЯРИ</p><h2 id="reader-dialog-title">Новий читач</h2></div><button class="icon-button" aria-label="Закрити">×</button></form>
+    <form id="reader-form" class="form-stack"></form>
+  </dialog>
+
+  <dialog id="history-dialog" class="dialog dialog-wide">
+    <form method="dialog" class="dialog-head"><div><p class="eyebrow">ОБЛІК ОПЕРАЦІЙ</p><h2 id="history-title">Історія читача</h2></div><button class="icon-button" aria-label="Закрити">×</button></form>
+    <div id="history-content"></div>
+  </dialog>
+
+  <dialog id="staff-dialog" class="dialog">
+    <form method="dialog" class="dialog-head"><div><p class="eyebrow">КЕРУВАННЯ ДОСТУПОМ</p><h2>Новий працівник</h2></div><button class="icon-button" aria-label="Закрити">×</button></form>
+    <form id="staff-form" class="form-stack">
+      <label>Логін<input name="login" required maxlength="80" autocomplete="username"></label>
+      <label>Пароль<input name="password" type="password" required minlength="8" maxlength="100" autocomplete="new-password"></label>
+      <label>Роль<select name="role"><option value="LIBRARIAN">Бібліотекар</option><option value="ADMIN">Адміністратор</option></select></label>
+      <div class="dialog-actions"><button type="button" class="button button-outline" data-close="staff-dialog">Скасувати</button><button class="button button-primary" type="submit">Створити обліковий запис</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="staff-password-dialog" class="dialog">
+    <form method="dialog" class="dialog-head"><div><p class="eyebrow">АДМІНІСТРУВАННЯ</p><h2 id="staff-password-title">Скидання пароля</h2></div><button class="icon-button" aria-label="Закрити">×</button></form>
+    <form id="staff-password-form" class="form-stack">
+      <label>Новий пароль<input name="newPassword" type="password" required minlength="8" maxlength="100" autocomplete="new-password"></label>
+      <label>Повторіть пароль<input name="confirmPassword" type="password" required minlength="8" maxlength="100" autocomplete="new-password"></label>
+      <div class="dialog-actions"><button type="button" class="button button-outline" data-close="staff-password-dialog">Скасувати</button><button class="button button-primary" type="submit">Скинути пароль</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/app.js" defer></script>
+</body>
+</html>
