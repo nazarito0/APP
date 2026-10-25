@@ -1,0 +1,9 @@
+target/
+.idea/
+*.iml
+.env
+certs/
+backups/
+*.p12
+*.jks
+*.cnf
