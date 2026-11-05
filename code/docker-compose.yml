@@ -1,0 +1,44 @@
+name: library-accounting
+
+services:
+  db:
+    image: mariadb:11.4
+    container_name: library-db
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: library_db
+      MARIADB_USER: library_user
+      MARIADB_PASSWORD: ${DB_PASSWORD:-library_pass}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_pass}
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: library-accounting:1.0.0
+    container_name: library-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mariadb://db:3306/library_db
+      DB_USERNAME: library_user
+      DB_PASSWORD: ${DB_PASSWORD:-library_pass}
+      ADMIN_LOGIN: ${ADMIN_LOGIN:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
+      TZ: Europe/Kyiv
+    ports:
+      - "8080:8080"
+
+volumes:
+  db_data:

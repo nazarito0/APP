@@ -1,0 +1,22 @@
+# Результати збірки та файли IDE
+target/
+.idea/
+*.iml
+.vscode/
+
+# Секрети, сертифікати й резервні копії не потрапляють в образ
+.env
+certs/
+backups/
+*.p12
+*.jks
+*.cnf
+
+# Файли, не потрібні для збірки образу
+scripts/
+README.md
+docker-compose.yml
+Dockerfile
+.dockerignore
+.git/
+.gitignore
